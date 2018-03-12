@@ -33,13 +33,25 @@ def scrape_blogs():
         body = soup.find('div', {'class': 'post hentry uncustomized-post-template'})
         print(body.getText().strip().splitlines())
 
-        content = body.getText().strip().splitlines()
-
+        lines = body.getText().strip().splitlines()
         
+        content = lines.pop(0).strip() + '\n\n'
 
-        # title = soup.find('h3', {'class': 'post-title entry-title'})
-        # title = title.getText()
-        # title = title.strip().rstrip('\n')
+        for line in lines:
+            curr_line = line.strip()
+            if curr_line:
+                if curr_line[0] == '-' and curr_line[1] == '-':
+                    break
+                else:
+                    content = content + curr_line + '\n'
+                    
+
+        print lines
+        print content        
+
+        title = soup.find('h3', {'class': 'post-title entry-title'})
+        title = title.getText()
+        title = title.strip().rstrip('\n')
 
         # text = ''
         # contents = soup.findAll('span', {'style': 'color: #b6d7a8;', 'style': 'color: #b6d7a8; font-family: "georgia";', 'style': 'color: #b6d7a8; font-family: "georgia"; font-size: 12pt;', 'style': 'color: #b6d7a8; font-family: "georgia"; font-size: 12.0pt;'})
@@ -49,36 +61,40 @@ def scrape_blogs():
         #     if content:
         #         text += content + '\n'
 
-        # author = soup.find('span', {'style': 'color: #9fc5e8;', 'style': 'color: #9fc5e8; font-family: "georgia";'})
+        author = soup.find('span', {'style': 'color: #9fc5e8;', 'style': 'color: #9fc5e8; font-family: "georgia";'})
         
-        # if not author:
-        #     divs = soup.findAll('div', {'class': 'MsoNormal'})
-        #     child = divs[-1].findChildren()[0]
-        #     author = child
+        if not author:
+            divs = soup.findAll('div', {'class': 'MsoNormal'})
+            child = divs[-1].findChildren()[0]
+            author = child
 
-        # author = author.getText()
-        # author = author.strip().rstrip()
-        # author = author.replace('--', '')
+        author = author.getText()
+        author = author.replace('--', '')
+        author = author.strip().rstrip()
+        
 
-        # # for title in titles:
-        # #     child = title.findChildren()[0]
-        # #     write_file("files/news-links.txt", contents=[main_url + child.get('href')], mode="a")
-        # #     print(main_url + child.get('href'))
-        # #     print("\n")
-        # #     i += 1
-        # #     if i == limit:
-        # #         break
+        # for title in titles:
+        #     child = title.findChildren()[0]
+        #     write_file("files/news-links.txt", contents=[main_url + child.get('href')], mode="a")
+        #     print(main_url + child.get('href'))
+        #     print("\n")
+        #     i += 1-
+        #     if i == limit:
+        #         break
 
         # # next_page = soup.find('a', {'title': 'Go to next page'})
         # # if next_page:
         # #     url = main_url + next_page.get('href')
         # # else:
 
-        # lit = title + '\n'
-        # lit = lit + date + '\n'
-        # lit = lit + author + '\n'
-        # lit = lit + title + '\n'
-        # lit = lit + text + '\n'
+        lit = title + '\n'
+        lit = lit + date + '\n'
+        lit = lit + author + '\n\n'
+        lit = lit + content + '\n'
+
+        print "--------"
+        print lit
+        print "--------"
 
         # f = open('data/' + title + '.txt', 'w')
         # f.write(lit.encode('utf-8') + '\n')

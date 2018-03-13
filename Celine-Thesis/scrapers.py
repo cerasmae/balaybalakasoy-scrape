@@ -31,7 +31,7 @@ def scrape_blogs():
         date = date.replace('.', '-')
         
         body = soup.find('div', {'class': 'post hentry uncustomized-post-template'})
-        print(body.getText().strip().splitlines())
+        # print(body.getText().strip().splitlines())
 
         lines = body.getText().strip().splitlines()
         
@@ -46,8 +46,8 @@ def scrape_blogs():
                     content = content + curr_line + '\n'
                     
 
-        print lines
-        print content        
+        # print lines
+        # print content        
 
         title = soup.find('h3', {'class': 'post-title entry-title'})
         title = title.getText()
@@ -64,8 +64,13 @@ def scrape_blogs():
         author = soup.find('span', {'style': 'color: #9fc5e8;', 'style': 'color: #9fc5e8; font-family: "georgia";'})
         
         if not author:
-            divs = soup.findAll('div', {'class': 'MsoNormal'})
+            divs = soup.findAll('div', {'style': 'font-family: Georgia;'})
             child = divs[-1].findChildren()[0]
+
+            if "," in child:
+                if "." not in child:
+                    child = divs[-2].findChildren()[0]
+
             author = child
 
         author = author.getText()
@@ -92,24 +97,28 @@ def scrape_blogs():
         lit = lit + author + '\n\n'
         lit = lit + content + '\n'
 
-        print "--------"
-        print lit
-        print "--------"
+        # print "--------"
+        # print lit
+        # print "--------"
 
-        # f = open('data/' + title + '.txt', 'w')
-        # f.write(lit.encode('utf-8') + '\n')
-        # f.close()
+        if os.path.exists('data/'+ title+'.txt'):
+            f = open('data/' + title + '_o.txt', 'w')
+        else:
+            f = open('data/' + title + '.txt', 'w')
 
-        # older_link = soup.find('a', {'class': 'blog-pager-older-link'})
-        # if older_link:
-        #     older_link = older_link['href']
-        #     url = older_link
-        #     f = open('checkpoint.txt', 'w')
-        #     f.write(url + '\n')
-        #     f.close()
-        # stop_scraping_process = False
-        # else:
-        stop_scraping_process = True
+        f.write(lit.encode('utf-8') + '\n')
+        f.close()
+
+        older_link = soup.find('a', {'class': 'blog-pager-older-link'})
+        if older_link:
+            older_link = older_link['href']
+            url = older_link
+            f = open('checkpoint.txt', 'w')
+            f.write(url + '\n')
+            f.close()
+            stop_scraping_process = False
+        else:
+            stop_scraping_process = True
         # stop_scraping_process = True
 
 '''
